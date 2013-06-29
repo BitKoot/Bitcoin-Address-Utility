@@ -29,6 +29,7 @@ using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Math.EC;
+using BtcAddress.Model;
 
 namespace Casascius.Bitcoin {
     public class Util {
@@ -327,12 +328,12 @@ namespace Casascius.Bitcoin {
             byte[] hex2 = new byte[21];
             Array.Copy(hex, 0, hex2, 1, 20);
 
-            int cointype = 0;
-            if (Int32.TryParse(AddressType, out cointype) == false) cointype = 0;
+            int cointype = AddressVersion.Bitcoin;
+            if (Int32.TryParse(AddressType, out cointype) == false) cointype = AddressVersion.Bitcoin;
 
-            if (AddressType == "Testnet") cointype = 111;
-            if (AddressType == "Namecoin") cointype = 52;
-            if (AddressType == "Litecoin") cointype = 48;
+            if (AddressType == "Testnet") cointype = AddressVersion.Testnet;
+            if (AddressType == "Namecoin") cointype = AddressVersion.Namecoin;
+            if (AddressType == "Litecoin") cointype = AddressVersion.Litecoin;
             hex2[0] = (byte)(cointype & 0xff);
             return ByteArrayToBase58Check(hex2);
 

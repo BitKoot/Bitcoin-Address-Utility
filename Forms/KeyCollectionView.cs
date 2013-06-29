@@ -28,6 +28,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Drawing.Printing;
 using Casascius.Bitcoin;
+using BtcAddress.Model;
 
 
 namespace BtcAddress.Forms {
@@ -39,8 +40,24 @@ namespace BtcAddress.Forms {
             InitializeComponent();
         }
 
-        private void newAddressToolStripMenuItem_Click(object sender, EventArgs e) {
-            KeyPair kp = KeyPair.Create(ExtraEntropy.GetEntropy());
+        private void newBtcAddressToolStripMenuItem_Click(object sender, EventArgs e) {
+            AddKey(AddressVersion.Bitcoin);
+        }
+
+        private void newTestnetAddressToolStripMenuItem_Click(object sender, EventArgs e) {
+            AddKey(AddressVersion.Testnet);
+        }
+
+        private void newNmcAddressToolStripMenuItem_Click(object sender, EventArgs e) {
+            AddKey(AddressVersion.Namecoin);
+        }
+
+        private void newLtcAddressToolStripMenuItem_Click(object sender, EventArgs e) {
+            AddKey(AddressVersion.Litecoin);
+        }
+
+        private void AddKey(byte addressVersion) {
+            KeyPair kp = KeyPair.Create(ExtraEntropy.GetEntropy(), false, addressVersion);
             KeyCollectionItem item = new KeyCollectionItem(kp);
             KeyCollection.AddItem(item);
         }

@@ -39,6 +39,7 @@ using System.IO;
 using System.Drawing.Printing;
 
 using Casascius.Bitcoin;
+using BtcAddress.Model;
 
 namespace BtcAddress {
     public partial class Form1 : Form {
@@ -397,10 +398,10 @@ namespace BtcAddress {
             get {
                 string cointype = cboCoinType.SelectedText.ToLowerInvariant();
                 switch (cointype) {
-                    case "bitcoin": return 0;
-                    case "namecoin": return 52;
-                    case "testnet": return 111;
-                    case "litecoin": return 48;
+                    case "bitcoin": return AddressVersion.Bitcoin;
+                    case "namecoin": return AddressVersion.Namecoin;
+                    case "testnet": return AddressVersion.Testnet;
+                    case "litecoin": return AddressVersion.Litecoin;
                 }
                 byte b = 0;
                 if (Byte.TryParse(cointype, out b)) return b;

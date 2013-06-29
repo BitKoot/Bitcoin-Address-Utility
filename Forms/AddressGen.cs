@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
 using Casascius.Bitcoin;
+using BtcAddress.Model;
 
 namespace BtcAddress.Forms {
     public partial class AddressGen : Form {
@@ -38,6 +39,8 @@ namespace BtcAddress.Forms {
         }
 
         private GenChoices GenChoice;
+
+        private byte ChosenAddressVersion = 0;
 
         private bool Generating = false;
         private bool GeneratingEnded = false;
@@ -64,6 +67,9 @@ namespace BtcAddress.Forms {
             txtTextInput.Text = "";
             txtTextInput.Visible = (rdoDeterministicWallet.Checked || rdoEncrypted.Checked);
             lblTextInput.Visible = (rdoDeterministicWallet.Checked || rdoEncrypted.Checked || rdoTwoFactor.Checked);
+            cboCoinType.Visible = rdoRandomWallet.Checked;
+            lblCoinType.Visible = rdoRandomWallet.Checked;
+
             if (rdoDeterministicWallet.Checked) {
                 lblTextInput.Text = "Seed for deterministic generation";
             } else if (rdoEncrypted.Checked) {
@@ -152,6 +158,22 @@ namespace BtcAddress.Forms {
                 GenChoice = GenChoices.TwoFactor;
             }
 
+            switch (cboCoinType.SelectedItem.ToString())
+            {
+                case "Namecoin":
+                    ChosenAddressVersion = AddressVersion.Namecoin;
+                    break;
+                case "Testnet":
+                    ChosenAddressVersion = AddressVersion.Testnet;
+                    break;
+                case "Litecoin":
+                    ChosenAddressVersion = AddressVersion.Litecoin;
+                    break;
+                default:
+                    ChosenAddressVersion = AddressVersion.Bitcoin;
+                    break;
+            }
+
             timer1.Interval = 250;
             timer1.Enabled = true;
             Generating = true;
@@ -201,7 +223,7 @@ namespace BtcAddress.Forms {
                         newitem = new KeyCollectionItem(mkp);
                         break;
                     case GenChoices.WIF:
-                        KeyPair kp = KeyPair.Create(ExtraEntropy.GetEntropy());
+                        KeyPair kp = KeyPair.Create(ExtraEntropy.GetEntropy(), false, ChosenAddressVersion);
                         s = kp.AddressBase58;
                         newitem = new KeyCollectionItem(kp);
                         break;

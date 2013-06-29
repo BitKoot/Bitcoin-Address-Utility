@@ -42,7 +42,10 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.keyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newBtcAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newTestnetAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newNmcAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newLtcAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateKeysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enterAnAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,6 +58,7 @@
             this.printPaperWalletsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.saveAddressListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAddressListWithPrivKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteSelectedItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -66,7 +70,6 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.detailsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.saveAddressListWithPrivKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -84,7 +87,6 @@
             this.menuStrip1.Size = new System.Drawing.Size(629, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             this.menuStrip1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.menuStrip1_MouseMove);
             // 
             // toolsToolStripMenuItem
@@ -208,19 +210,43 @@
             // keyToolStripMenuItem
             // 
             this.keyToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newAddressToolStripMenuItem,
+            this.newBtcAddressToolStripMenuItem,
+            this.newTestnetAddressToolStripMenuItem,
+            this.newNmcAddressToolStripMenuItem,
+            this.newLtcAddressToolStripMenuItem,
             this.generateKeysToolStripMenuItem,
             this.enterAnAddressToolStripMenuItem});
             this.keyToolStripMenuItem.Name = "keyToolStripMenuItem";
             this.keyToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.keyToolStripMenuItem.Text = "&Address";
             // 
-            // newAddressToolStripMenuItem
+            // newBtcAddressToolStripMenuItem
             // 
-            this.newAddressToolStripMenuItem.Name = "newAddressToolStripMenuItem";
-            this.newAddressToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.newAddressToolStripMenuItem.Text = "&New address";
-            this.newAddressToolStripMenuItem.Click += new System.EventHandler(this.newAddressToolStripMenuItem_Click);
+            this.newBtcAddressToolStripMenuItem.Name = "newBtcAddressToolStripMenuItem";
+            this.newBtcAddressToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.newBtcAddressToolStripMenuItem.Text = "New &Bitcoin address";
+            this.newBtcAddressToolStripMenuItem.Click += new System.EventHandler(this.newBtcAddressToolStripMenuItem_Click);
+            // 
+            // newTestnetAddressToolStripMenuItem
+            // 
+            this.newTestnetAddressToolStripMenuItem.Name = "newTestnetAddressToolStripMenuItem";
+            this.newTestnetAddressToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.newTestnetAddressToolStripMenuItem.Text = "New &Testnet address";
+            this.newTestnetAddressToolStripMenuItem.Click += new System.EventHandler(this.newTestnetAddressToolStripMenuItem_Click);
+            // 
+            // newNmcAddressToolStripMenuItem
+            // 
+            this.newNmcAddressToolStripMenuItem.Name = "newNmcAddressToolStripMenuItem";
+            this.newNmcAddressToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.newNmcAddressToolStripMenuItem.Text = "New &Namecoin address";
+            this.newNmcAddressToolStripMenuItem.Click += new System.EventHandler(this.newNmcAddressToolStripMenuItem_Click);
+            // 
+            // newLtcAddressToolStripMenuItem
+            // 
+            this.newLtcAddressToolStripMenuItem.Name = "newLtcAddressToolStripMenuItem";
+            this.newLtcAddressToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.newLtcAddressToolStripMenuItem.Text = "New &Litecoin address";
+            this.newLtcAddressToolStripMenuItem.Click += new System.EventHandler(this.newLtcAddressToolStripMenuItem_Click);
             // 
             // generateKeysToolStripMenuItem
             // 
@@ -315,6 +341,13 @@
             this.saveAddressListToolStripMenuItem.Text = "Save Address List";
             this.saveAddressListToolStripMenuItem.Click += new System.EventHandler(this.saveAddressListToolStripMenuItem_Click);
             // 
+            // saveAddressListWithPrivKeyToolStripMenuItem
+            // 
+            this.saveAddressListWithPrivKeyToolStripMenuItem.Name = "saveAddressListWithPrivKeyToolStripMenuItem";
+            this.saveAddressListWithPrivKeyToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
+            this.saveAddressListWithPrivKeyToolStripMenuItem.Text = "Save Address List with PrivKey";
+            this.saveAddressListWithPrivKeyToolStripMenuItem.Click += new System.EventHandler(this.saveAddressListWithPrivKeyToolStripMenuItem_Click);
+            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -391,13 +424,6 @@
             this.detailsToolStripMenuItem.Text = "&Details";
             this.detailsToolStripMenuItem.Click += new System.EventHandler(this.detailsToolStripMenuItem_Click);
             // 
-            // saveAddressListWithPrivKeyToolStripMenuItem
-            // 
-            this.saveAddressListWithPrivKeyToolStripMenuItem.Name = "saveAddressListWithPrivKeyToolStripMenuItem";
-            this.saveAddressListWithPrivKeyToolStripMenuItem.Size = new System.Drawing.Size(315, 24);
-            this.saveAddressListWithPrivKeyToolStripMenuItem.Text = "Save Address List with PrivKey";
-            this.saveAddressListWithPrivKeyToolStripMenuItem.Click += new System.EventHandler(this.saveAddressListWithPrivKeyToolStripMenuItem_Click);
-            // 
             // KeyCollectionView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -431,7 +457,10 @@
         private System.Windows.Forms.ColumnHeader chPrivateKey;
         private System.Windows.Forms.ColumnHeader chBalance;
         private System.Windows.Forms.ToolStripMenuItem keyToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newAddressToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newBtcAddressToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newTestnetAddressToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newNmcAddressToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newLtcAddressToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateKeysToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;

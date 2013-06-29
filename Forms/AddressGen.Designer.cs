@@ -34,13 +34,15 @@
             this.btnGenerateAddresses = new System.Windows.Forms.Button();
             this.lblTextInput = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.rdoTwoFactor = new System.Windows.Forms.RadioButton();
             this.rdoEncrypted = new System.Windows.Forms.RadioButton();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.chkRetainPrivKey = new System.Windows.Forms.CheckBox();
-            this.rdoTwoFactor = new System.Windows.Forms.RadioButton();
+            this.lblCoinType = new System.Windows.Forms.Label();
+            this.cboCoinType = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numGenCount)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -156,6 +158,17 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Private key type";
             // 
+            // rdoTwoFactor
+            // 
+            this.rdoTwoFactor.AutoSize = true;
+            this.rdoTwoFactor.Location = new System.Drawing.Point(14, 67);
+            this.rdoTwoFactor.Name = "rdoTwoFactor";
+            this.rdoTwoFactor.Size = new System.Drawing.Size(130, 17);
+            this.rdoTwoFactor.TabIndex = 7;
+            this.rdoTwoFactor.Text = "Two-Factor Encrypted";
+            this.rdoTwoFactor.UseVisualStyleBackColor = true;
+            this.rdoTwoFactor.CheckedChanged += new System.EventHandler(this.rdoWalletType_CheckedChanged);
+            // 
             // rdoEncrypted
             // 
             this.rdoEncrypted.AutoSize = true;
@@ -205,22 +218,38 @@
             this.chkRetainPrivKey.UseVisualStyleBackColor = true;
             this.chkRetainPrivKey.Visible = false;
             // 
-            // rdoTwoFactor
+            // lblCoinType
             // 
-            this.rdoTwoFactor.AutoSize = true;
-            this.rdoTwoFactor.Location = new System.Drawing.Point(14, 67);
-            this.rdoTwoFactor.Name = "rdoTwoFactor";
-            this.rdoTwoFactor.Size = new System.Drawing.Size(130, 17);
-            this.rdoTwoFactor.TabIndex = 7;
-            this.rdoTwoFactor.Text = "Two-Factor Encrypted";
-            this.rdoTwoFactor.UseVisualStyleBackColor = true;
-            this.rdoTwoFactor.CheckedChanged += new System.EventHandler(this.rdoWalletType_CheckedChanged);
+            this.lblCoinType.AutoSize = true;
+            this.lblCoinType.Location = new System.Drawing.Point(10, 68);
+            this.lblCoinType.Name = "lblCoinType";
+            this.lblCoinType.Size = new System.Drawing.Size(51, 13);
+            this.lblCoinType.TabIndex = 15;
+            this.lblCoinType.Text = "Coin type";
+            this.lblCoinType.Visible = false;
+            // 
+            // cboCoinType
+            // 
+            this.cboCoinType.FormattingEnabled = true;
+            this.cboCoinType.Items.AddRange(new object[] {
+            "Bitcoin",
+            "Testnet",
+            "Namecoin",
+            "Litecoin"});
+            this.cboCoinType.Location = new System.Drawing.Point(51, 81);
+            this.cboCoinType.Name = "cboCoinType";
+            this.cboCoinType.Size = new System.Drawing.Size(90, 21);
+            this.cboCoinType.TabIndex = 23;
+            this.cboCoinType.Text = "Bitcoin";
+            this.cboCoinType.Visible = false;
             // 
             // AddressGen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(384, 254);
+            this.Controls.Add(this.cboCoinType);
+            this.Controls.Add(this.lblCoinType);
             this.Controls.Add(this.chkRetainPrivKey);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox1);
@@ -261,5 +290,7 @@
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.CheckBox chkRetainPrivKey;
         private System.Windows.Forms.RadioButton rdoTwoFactor;
+        private System.Windows.Forms.Label lblCoinType;
+        private System.Windows.Forms.ComboBox cboCoinType;
     }
 }

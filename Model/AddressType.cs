@@ -19,15 +19,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BtcAddress.Model
+namespace Casascius.Bitcoin
 {
 	/// <summary>
 	/// Class containing constant version numbers of different address types.
 	/// </summary>
-    public class AddressVersion {
+    public static class AddressType {
         public const byte Bitcoin = 0;
         public const byte Litecoin = 48;
         public const byte Namecoin = 52;
         public const byte Testnet = 111;
+
+        public static byte ToAddressType(string type) {
+            switch (type)
+            {
+                case "Namecoin":
+                    return AddressType.Namecoin;
+                case "Testnet":
+                    return AddressType.Testnet;
+                case "Litecoin":
+                    return AddressType.Litecoin;
+                default:
+                    return AddressType.Bitcoin;
+            }
+        }
+
+        public static string FromAddressType(byte addressType)
+        {
+            switch (addressType)
+            {
+                case AddressType.Namecoin:
+                    return "Namecoin";
+                case AddressType.Testnet:
+                    return "Testnet";
+                case AddressType.Litecoin:
+                    return "Litecoin";
+                default:
+                    return "Bitcoin";
+            }
+        }
     }
 }

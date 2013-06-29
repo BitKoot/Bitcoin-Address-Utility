@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Bitcoin Address Utility.  If not, see http://www.gnu.org/licenses/.
 
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -112,7 +111,7 @@ namespace Casascius.Bitcoin {
         /// Create a Bitcoin address from a key represented in a string.
         /// </summary>
         public KeyPair(string key, bool compressed=false, byte addressType=0) {
-            this._addressType = addressType;
+            _addressType = addressType;
             string result = constructWithKey(key, compressed);
             if (result != null) throw new ArgumentException(result);
 
@@ -127,8 +126,8 @@ namespace Casascius.Bitcoin {
                 hex = Util.HexStringToBytes(key, true);
                 if (hex == null) {
                     // tolerate a minikey
-                    if (MiniKeyPair.IsValidMiniKey(key) > 0) {
-                        PrivateKeyBytes = new MiniKeyPair(key).PrivateKeyBytes;
+                    if (MiniKeyPair.IsValidMiniKey(key, _addressType) > 0) {
+                        PrivateKeyBytes = new MiniKeyPair(key, _addressType).PrivateKeyBytes;
                         return null;
                     } else {
                         return "Invalid private key";

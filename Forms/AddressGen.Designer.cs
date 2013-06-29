@@ -226,7 +226,6 @@
             this.lblCoinType.Size = new System.Drawing.Size(51, 13);
             this.lblCoinType.TabIndex = 15;
             this.lblCoinType.Text = "Coin type";
-            this.lblCoinType.Visible = false;
             // 
             // cboCoinType
             // 
@@ -241,7 +240,6 @@
             this.cboCoinType.Size = new System.Drawing.Size(90, 21);
             this.cboCoinType.TabIndex = 23;
             this.cboCoinType.Text = "Bitcoin";
-            this.cboCoinType.Visible = false;
             // 
             // AddressGen
             // 

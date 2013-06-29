@@ -26,7 +26,6 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
 using Casascius.Bitcoin;
-using BtcAddress.Model;
 
 namespace BtcAddress.Forms {
     public partial class AddressGen : Form {
@@ -40,7 +39,7 @@ namespace BtcAddress.Forms {
 
         private GenChoices GenChoice;
 
-        private byte ChosenAddressVersion = 0;
+        private byte ChosenAddressType = 0;
 
         private bool Generating = false;
         private bool GeneratingEnded = false;
@@ -67,8 +66,8 @@ namespace BtcAddress.Forms {
             txtTextInput.Text = "";
             txtTextInput.Visible = (rdoDeterministicWallet.Checked || rdoEncrypted.Checked);
             lblTextInput.Visible = (rdoDeterministicWallet.Checked || rdoEncrypted.Checked || rdoTwoFactor.Checked);
-            cboCoinType.Visible = rdoRandomWallet.Checked;
-            lblCoinType.Visible = rdoRandomWallet.Checked;
+            cboCoinType.Visible = rdoMiniKeys.Checked || rdoRandomWallet.Checked;
+            lblCoinType.Visible = rdoMiniKeys.Checked || rdoRandomWallet.Checked;
 
             if (rdoDeterministicWallet.Checked) {
                 lblTextInput.Text = "Seed for deterministic generation";
@@ -158,22 +157,8 @@ namespace BtcAddress.Forms {
                 GenChoice = GenChoices.TwoFactor;
             }
 
-            switch (cboCoinType.SelectedItem.ToString())
-            {
-                case "Namecoin":
-                    ChosenAddressVersion = AddressVersion.Namecoin;
-                    break;
-                case "Testnet":
-                    ChosenAddressVersion = AddressVersion.Testnet;
-                    break;
-                case "Litecoin":
-                    ChosenAddressVersion = AddressVersion.Litecoin;
-                    break;
-                default:
-                    ChosenAddressVersion = AddressVersion.Bitcoin;
-                    break;
-            }
-
+            ChosenAddressType = AddressType.ToAddressType(cboCoinType.SelectedItem.ToString());
+            
             timer1.Interval = 250;
             timer1.Enabled = true;
             Generating = true;
@@ -218,12 +203,12 @@ namespace BtcAddress.Forms {
                 KeyCollectionItem newitem = null;
                 switch (GenChoice) {
                     case GenChoices.Minikey:
-                        MiniKeyPair mkp = MiniKeyPair.CreateRandom(ExtraEntropy.GetEntropy());
+                        MiniKeyPair mkp = MiniKeyPair.CreateRandom(ExtraEntropy.GetEntropy(), ChosenAddressType);
                         string s = mkp.AddressBase58; // read the property to entice it to compute everything
                         newitem = new KeyCollectionItem(mkp);
                         break;
                     case GenChoices.WIF:
-                        KeyPair kp = KeyPair.Create(ExtraEntropy.GetEntropy(), false, ChosenAddressVersion);
+                        KeyPair kp = KeyPair.Create(ExtraEntropy.GetEntropy(), false, ChosenAddressType);
                         s = kp.AddressBase58;
                         newitem = new KeyCollectionItem(kp);
                         break;

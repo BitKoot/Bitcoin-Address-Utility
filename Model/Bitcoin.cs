@@ -29,7 +29,6 @@ using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Math.EC;
-using BtcAddress.Model;
 
 namespace Casascius.Bitcoin {
     public class Util {
@@ -321,27 +320,24 @@ namespace Casascius.Bitcoin {
 
         }
 
-        public static string PubHashToAddress(string PubHash, string AddressType) {
+        public static string PubHashToAddress(string PubHash, string addressType) {
             byte[] hex = ValidateAndGetHexPublicHash(PubHash);
             if (hex == null) throw new ApplicationException("Invalid public hex key");
 
             byte[] hex2 = new byte[21];
             Array.Copy(hex, 0, hex2, 1, 20);
 
-            int cointype = AddressVersion.Bitcoin;
-            if (Int32.TryParse(AddressType, out cointype) == false) cointype = AddressVersion.Bitcoin;
+            byte cointype = AddressType.Bitcoin;
+            if (byte.TryParse(addressType, out cointype) == false) cointype = AddressType.Bitcoin;
 
-            if (AddressType == "Testnet") cointype = AddressVersion.Testnet;
-            if (AddressType == "Namecoin") cointype = AddressVersion.Namecoin;
-            if (AddressType == "Litecoin") cointype = AddressVersion.Litecoin;
+            if (addressType == "Testnet") cointype = AddressType.Testnet;
+            if (addressType == "Namecoin") cointype = AddressType.Namecoin;
+            if (addressType == "Litecoin") cointype = AddressType.Litecoin;
             hex2[0] = (byte)(cointype & 0xff);
             return ByteArrayToBase58Check(hex2);
-
-
         }
 
         public static bool PassphraseTooSimple(string passphrase) {
-
             int Lowercase = 0, Uppercase = 0, Numbers = 0, Symbols = 0, Spaces = 0;
             foreach (char c in passphrase.ToCharArray()) {
                 if (c >= 'a' && c <= 'z') {
@@ -358,14 +354,13 @@ namespace Casascius.Bitcoin {
             }
 
             // let mini private keys through - they won't contain words, they are nonsense characters, so their entropy is a bit better per character
-            if (MiniKeyPair.IsValidMiniKey(passphrase) != 1) return false;
+            if (MiniKeyPair.IsValidMiniKey(passphrase, 0) != 1) return false;
 
             if (passphrase.Length < 30 && (Lowercase < 10 || Uppercase < 3 || Numbers < 2 || Symbols < 2)) {
                 return true;
             }
 
             return false;
-
         }
 
         public static byte[] ComputeSha256(string ofwhat) {

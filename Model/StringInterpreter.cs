@@ -141,7 +141,7 @@ namespace Casascius.Bitcoin {
                 } catch { }
             }
 
-            if (MiniKeyPair.IsValidMiniKey(what) == 1) return new MiniKeyPair(what);
+            if (MiniKeyPair.IsValidMiniKey(what, addressType) == 1) return new MiniKeyPair(what, addressType);
 
             return null;
 

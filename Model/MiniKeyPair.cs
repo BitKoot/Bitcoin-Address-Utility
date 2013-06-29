@@ -32,16 +32,18 @@ using Org.BouncyCastle.Math.EC;
 namespace Casascius.Bitcoin {
 
     public class MiniKeyPair : KeyPair {
-		
-        public static MiniKeyPair CreateDeterministic(string seed) {
 
-            // flow:
-            // 1. take SHA256 of seed to yield 32 bytes
-            // 2. base58-encode those 32 bytes as though it were a regular private key. now we have 51 characters.
-            // 3. remove all instances of the digit 1. (likely source of typos)
-            // 4. take 29 characters starting with position 4
-            //    (this is to skip those first characters of a base58check-encoded private key with low entropy)
-            // 5. test to see if it matches the typo check.  while it does not, increment and try again.
+        /// <summary>
+        /// flow:
+        /// 1. take SHA256 of seed to yield 32 bytes
+        /// 2. base58-encode those 32 bytes as though it were a regular private key. now we have 51 characters.
+        /// 3. remove all instances of the digit 1. (likely source of typos)
+        /// 4. take 29 characters starting with position 4
+        ///    (this is to skip those first characters of a base58check-encoded private key with low entropy)
+        /// 5. test to see if it matches the typo check.  while it does not, increment and try again.
+        /// </summary>
+        /// <returns></returns>
+        public static MiniKeyPair CreateDeterministic(string seed, byte addressType = 0) {
             UTF8Encoding utf8 = new UTF8Encoding(false);
             byte[] sha256ofseed = Util.ComputeSha256(seed);
 
@@ -51,7 +53,7 @@ namespace Casascius.Bitcoin {
             char[] chars = keytotry.ToCharArray();
             char[] charstest = (keytotry + "?").ToCharArray();
             
-            while (Util.ComputeSha256(utf8.GetBytes(charstest))[0] != 0) {
+            while (Util.ComputeSha256(utf8.GetBytes(charstest))[0] != addressType) {
                 // As long as key doesn't pass typo check, increment it.
                 for (int i = chars.Length - 1; i >= 0; i--) {
                     char c = chars[i];
@@ -79,7 +81,7 @@ namespace Casascius.Bitcoin {
                     }
                 }
             }
-            return new MiniKeyPair(new String(chars));
+            return new MiniKeyPair(new String(chars), addressType);
         }
 
         /// <summary>
@@ -87,7 +89,7 @@ namespace Casascius.Bitcoin {
         /// Entropy is taken from .NET's SecureRandom, the system clock,
         /// and any optionally provided salt.
         /// </summary>
-        public static MiniKeyPair CreateRandom(string usersalt) {
+        public static MiniKeyPair CreateRandom(string usersalt, byte addressType = 0) {
             if (usersalt == null) usersalt = "ok, whatever";
             usersalt += DateTime.UtcNow.Ticks.ToString();
             SecureRandom sr = new SecureRandom();
@@ -95,11 +97,12 @@ namespace Casascius.Bitcoin {
             for (int i = 0; i < 64; i++) {
                 chars[i] = (char)(32 + (sr.NextInt() % 64));
             }
-            return CreateDeterministic(usersalt + new String(chars));
+            return CreateDeterministic(usersalt + new String(chars), addressType);
         }
 
 
-        public MiniKeyPair(string key) {
+        public MiniKeyPair(string key, byte addressType = 0) {
+            _addressType = addressType;
             MiniKey = key;
         }
 
@@ -121,7 +124,7 @@ namespace Casascius.Bitcoin {
                 if (value == null) {
                     PrivateKeyBytes = null;
                 } else {
-                    if (IsValidMiniKey(value) <= 0) {
+                    if (IsValidMiniKey(value, _addressType) <= 0) {
                         throw new ApplicationException("Not a valid minikey");
                     }
                     _minikey = value;
@@ -140,13 +143,13 @@ namespace Casascius.Bitcoin {
         /// Zero or negative indicates not a valid Mini Private Key.
         /// -1 means well formed but fails typo check.
         /// </summary>
-        public static int IsValidMiniKey(string candidate) {
+        public static int IsValidMiniKey(string candidate, byte addressType) {
             if (candidate.Length != 22 && candidate.Length != 26 && candidate.Length != 30) return 0;
             if (candidate.StartsWith("S") == false) return 0;
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("^S[1-9A-HJ-NP-Za-km-z]{21,29}$");
             if (reg.IsMatch(candidate) == false) return 0;
             byte[] ahash = Util.ComputeSha256(candidate + "?"); // first round
-            if (ahash[0] == 0) return 1;
+            if ((int)ahash[0] == addressType) return 1;
             // for (int ct = 0; ct < 716; ct++) ahash = sha256.ComputeHash(ahash); // second thru 717th
             // if (ahash[0] == 0) return 1;
             return -1;

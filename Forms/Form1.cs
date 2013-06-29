@@ -39,7 +39,6 @@ using System.IO;
 using System.Drawing.Printing;
 
 using Casascius.Bitcoin;
-using BtcAddress.Model;
 
 namespace BtcAddress {
     public partial class Form1 : Form {
@@ -53,12 +52,16 @@ namespace BtcAddress {
         /// Item may represent an AddressBase, PublicKey, KeyPair, MiniKey, or an EncryptedKeyPair
         /// </summary>
         public void DisplayKeyCollectionItem(KeyCollectionItem item) {
+            if (item != null && item.Address != null) {
+                cboCoinType.Text = AddressType.FromAddressType(item.Address.AddressType);
+            }
+
             try {
                 ChangeFlag++;
                 if (item.EncryptedKeyPair != null) {
                     SetText(txtPrivWIF, item.EncryptedKeyPair.EncryptedPrivateKey);                    
                     // blank out any validation info of the minikey
-                    UpdateMinikeyDescription();
+                    UpdateMinikeyDescription(item.Address.AddressType);
                     SetText(txtPassphrase, "");
                     if (item.EncryptedKeyPair.IsUnencryptedPrivateKeyAvailable()) {
                         SetText(txtPrivHex, item.EncryptedKeyPair.GetUnencryptedPrivateKey().PublicKeyHex);
@@ -90,7 +93,7 @@ namespace BtcAddress {
                 }
                 
                 // update the label to indicate whether this is a valid minikey (or blank it out if n/a)
-                UpdateMinikeyDescription();
+                UpdateMinikeyDescription(item.Address.AddressType);
 
                 if (item.Address != null) {
 
@@ -123,8 +126,8 @@ namespace BtcAddress {
 
         }
 
-        private void UpdateMinikeyDescription() {
-            int isminikey = MiniKeyPair.IsValidMiniKey(txtMinikey.Text);
+        private void UpdateMinikeyDescription(byte addressType) {
+            int isminikey = MiniKeyPair.IsValidMiniKey(txtMinikey.Text, addressType);
             if (isminikey == 1) {
                 lblWhyNot.Visible = false;
                 lblNotSafe.Visible = true;
@@ -152,7 +155,7 @@ namespace BtcAddress {
             ChangeFlag++;
             try {
                 SetText(txtPrivHex, RemoveSpacesIf(Util.PassphraseToPrivHex(txtMinikey.Text)));
-                UpdateMinikeyDescription();
+                UpdateMinikeyDescription(0);
 
                 btnPrivHexToWIF_Click(null, null);
                 btnPrivToPub_Click(null, null);
@@ -304,7 +307,7 @@ namespace BtcAddress {
                 lblWhyNot.Visible = false;
                 SetText(txtMinikey, "");
 
-                KeyPair kp = KeyPair.Create(ExtraEntropy.GetEntropy(), compressToolStripMenuItem.Checked);
+                KeyPair kp = KeyPair.Create(ExtraEntropy.GetEntropy(), compressToolStripMenuItem.Checked, AddressType.ToAddressType(cboCoinType.Text));
 
                 if (txtPassphrase.Text != "") {
                     SetText(txtPrivWIF, new Bip38KeyPair(kp, txtPassphrase.Text).EncryptedPrivateKey);
@@ -396,12 +399,12 @@ namespace BtcAddress {
 
         private byte AddressTypeByte {
             get {
-                string cointype = cboCoinType.SelectedText.ToLowerInvariant();
+                string cointype = cboCoinType.Text.ToLowerInvariant();
                 switch (cointype) {
-                    case "bitcoin": return AddressVersion.Bitcoin;
-                    case "namecoin": return AddressVersion.Namecoin;
-                    case "testnet": return AddressVersion.Testnet;
-                    case "litecoin": return AddressVersion.Litecoin;
+                    case "bitcoin": return AddressType.Bitcoin;
+                    case "namecoin": return AddressType.Namecoin;
+                    case "testnet": return AddressType.Testnet;
+                    case "litecoin": return AddressType.Litecoin;
                 }
                 byte b = 0;
                 if (Byte.TryParse(cointype, out b)) return b;

@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Barcode\Barcode128b.cs" />
     <Compile Include="Barcode\QR.cs" />
+    <Compile Include="Model\AddressType.cs" />
     <Compile Include="Model\Base58.cs" />
     <Compile Include="Model\Base58CheckString.cs" />
     <Compile Include="Model\Bip38Base.cs" />
@@ -250,7 +251,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="bitcoinlogo.ico" />
-    <Compile Include="Model\AddressVersion.cs" />
     <Content Include="note-blue.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

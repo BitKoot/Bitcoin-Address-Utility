@@ -44,10 +44,8 @@ namespace Casascius.Bitcoin
             }
         }
 
-        public static string FromAddressType(byte addressType)
-        {
-            switch (addressType)
-            {
+        public static string FromAddressType(byte addressType) {
+            switch (addressType) {
                 case AddressType.Namecoin:
                     return "Namecoin";
                 case AddressType.Testnet:
@@ -57,6 +55,10 @@ namespace Casascius.Bitcoin
                 default:
                     return "Bitcoin";
             }
+        }
+
+        public static byte ToPrivateKeyPrefix(byte addressType) {
+            return (byte)(addressType + 0x80);
         }
     }
 }

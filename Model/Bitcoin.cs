@@ -51,27 +51,27 @@ namespace Casascius.Bitcoin {
         }
 
 
-        public static byte[] ValidateAndGetHexPublicKey(string PubHex) {
+        public static byte[] ValidateAndGetHexPublicKey(byte leadingbyte, string PubHex) {
             byte[] hex = GetHexBytes(PubHex, 64);
 
             if (hex == null || hex.Length < 64 || hex.Length > 65) {
                 throw new ApplicationException("Hex is not 64 or 65 bytes.");
             }
 
-            // if leading 00, change it to 0x80
+            // if leading 00, change it to leadingbyte
             if (hex.Length == 65) {
-                if (hex[0] == 0 || hex[0] == 4) {
-                    hex[0] = 4;
+                if (hex[0] == 0 || hex[0] == leadingbyte) {
+                    hex[0] = leadingbyte;
                 } else {
                     throw new ApplicationException("Not a valid public key");
                 }
             }
 
-            // add 0x80 byte if not present
+            // add leadingbyte byte if not present
             if (hex.Length == 64) {
                 byte[] hex2 = new byte[65];
                 Array.Copy(hex, 0, hex2, 1, 64);
-                hex2[0] = 4;
+                hex2[0] = leadingbyte;
                 hex = hex2;
             }
             return hex;
@@ -96,20 +96,20 @@ namespace Casascius.Bitcoin {
                 throw new ApplicationException("Hex is not 32 or 33 bytes.");
             }
 
-            // if leading 00, change it to 0x80
+            // if leading 00, change it to leadingbyte
             if (hex.Length == 33) {
-                if (hex[0] == 0 || hex[0] == 0x80) {
-                    hex[0] = 0x80;
+                if (hex[0] == 0 || hex[0] == leadingbyte) {
+                    hex[0] = leadingbyte;
                 } else {
                     throw new ApplicationException("Not a valid private key");
                 }
             }
 
-            // add 0x80 byte if not present
+            // add leadingbyte if not present
             if (hex.Length == 32 && desiredByteCount==33) {
                 byte[] hex2 = new byte[33];
                 Array.Copy(hex, 0, hex2, 1, 32);
-                hex2[0] = 0x80;
+                hex2[0] = leadingbyte;
                 hex = hex2;
             }
 
@@ -303,8 +303,8 @@ namespace Casascius.Bitcoin {
             return pubaddr;
         }
 
-        public static string PubHexToPubHash(string PubHex) {
-            byte[] hex = ValidateAndGetHexPublicKey(PubHex);
+        public static string PubHexToPubHash(byte leadingbyte, string pubHex) {
+            byte[] hex = ValidateAndGetHexPublicKey(leadingbyte, pubHex);
             if (hex == null) throw new ApplicationException("Invalid public hex key");
             return PubHexToPubHash(hex);
         }
@@ -354,7 +354,7 @@ namespace Casascius.Bitcoin {
             }
 
             // let mini private keys through - they won't contain words, they are nonsense characters, so their entropy is a bit better per character
-            if (MiniKeyPair.IsValidMiniKey(passphrase, 0) != 1) return false;
+            if (MiniKeyPair.IsValidMiniKey(passphrase) != 1) return false;
 
             if (passphrase.Length < 30 && (Lowercase < 10 || Uppercase < 3 || Numbers < 2 || Symbols < 2)) {
                 return true;

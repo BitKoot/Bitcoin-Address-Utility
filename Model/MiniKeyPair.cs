@@ -53,7 +53,7 @@ namespace Casascius.Bitcoin {
             char[] chars = keytotry.ToCharArray();
             char[] charstest = (keytotry + "?").ToCharArray();
             
-            while (Util.ComputeSha256(utf8.GetBytes(charstest))[0] != addressType) {
+            while (Util.ComputeSha256(utf8.GetBytes(charstest))[0] != 0) {
                 // As long as key doesn't pass typo check, increment it.
                 for (int i = chars.Length - 1; i >= 0; i--) {
                     char c = chars[i];
@@ -102,7 +102,7 @@ namespace Casascius.Bitcoin {
 
 
         public MiniKeyPair(string key, byte addressType = 0) {
-            _addressType = addressType;
+            AddressType = addressType;
             MiniKey = key;
         }
 
@@ -124,7 +124,7 @@ namespace Casascius.Bitcoin {
                 if (value == null) {
                     PrivateKeyBytes = null;
                 } else {
-                    if (IsValidMiniKey(value, _addressType) <= 0) {
+                    if (IsValidMiniKey(value) <= 0) {
                         throw new ApplicationException("Not a valid minikey");
                     }
                     _minikey = value;
@@ -143,13 +143,13 @@ namespace Casascius.Bitcoin {
         /// Zero or negative indicates not a valid Mini Private Key.
         /// -1 means well formed but fails typo check.
         /// </summary>
-        public static int IsValidMiniKey(string candidate, byte addressType) {
+        public static int IsValidMiniKey(string candidate) {
             if (candidate.Length != 22 && candidate.Length != 26 && candidate.Length != 30) return 0;
             if (candidate.StartsWith("S") == false) return 0;
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("^S[1-9A-HJ-NP-Za-km-z]{21,29}$");
             if (reg.IsMatch(candidate) == false) return 0;
             byte[] ahash = Util.ComputeSha256(candidate + "?"); // first round
-            if ((int)ahash[0] == addressType) return 1;
+            if ((int)ahash[0] == 0) return 1;
             // for (int ct = 0; ct < 716; ct++) ahash = sha256.ComputeHash(ahash); // second thru 717th
             // if (ahash[0] == 0) return 1;
             return -1;

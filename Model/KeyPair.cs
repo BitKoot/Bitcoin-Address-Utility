@@ -83,7 +83,7 @@ namespace Casascius.Bitcoin {
         /// </summary>
         public KeyPair(BigInteger bi, bool compressed = false, byte addressType = 0) {
             this.IsCompressedPoint = compressed;
-            this._addressType = addressType;
+            this.AddressType = addressType;
             
             var ps = Org.BouncyCastle.Asn1.Sec.SecNamedCurves.GetByName("secp256k1");
             if (bi.CompareTo(ps.N) >= 0 || bi.SignValue <= 0) {
@@ -99,9 +99,9 @@ namespace Casascius.Bitcoin {
         /// </summary>
         public KeyPair(byte[] bytes, bool compressed=false, byte addressType=0) {
             if (bytes.Length == 32) {
+                AddressType = addressType;
                 PrivateKeyBytes = bytes;
                 this.IsCompressedPoint = compressed;
-                this._addressType = addressType;
             } else {
                 throw new ArgumentException("Byte array provided to KeyPair constructor must be 32 bytes long");
             }
@@ -111,7 +111,7 @@ namespace Casascius.Bitcoin {
         /// Create a Bitcoin address from a key represented in a string.
         /// </summary>
         public KeyPair(string key, bool compressed=false, byte addressType=0) {
-            _addressType = addressType;
+            AddressType = addressType;
             string result = constructWithKey(key, compressed);
             if (result != null) throw new ArgumentException(result);
 
@@ -126,8 +126,8 @@ namespace Casascius.Bitcoin {
                 hex = Util.HexStringToBytes(key, true);
                 if (hex == null) {
                     // tolerate a minikey
-                    if (MiniKeyPair.IsValidMiniKey(key, _addressType) > 0) {
-                        PrivateKeyBytes = new MiniKeyPair(key, _addressType).PrivateKeyBytes;
+                    if (MiniKeyPair.IsValidMiniKey(key) > 0) {
+                        PrivateKeyBytes = new MiniKeyPair(key, AddressType).PrivateKeyBytes;
                         return null;
                     } else {
                         return "Invalid private key";
@@ -138,12 +138,12 @@ namespace Casascius.Bitcoin {
                 _privKey = new byte[32];
                 Array.Copy(hex, 0, _privKey, 0, 32);
                 IsCompressedPoint = compressed;
-            } else if (hex.Length == 33 && hex[0] == 0x80) {
+            } else if (hex.Length == 33 && hex[0] == Bitcoin.AddressType.ToPrivateKeyPrefix(AddressType)) {
                 // normal private key
                 _privKey = new byte[32];
                 Array.Copy(hex, 1, _privKey, 0, 32);
                 IsCompressedPoint = false;
-            } else if (hex.Length == 34 && hex[0] == 0x80 && hex[33] == 0x01) {
+            } else if (hex.Length == 34 && hex[0] == Bitcoin.AddressType.ToPrivateKeyPrefix(AddressType) && hex[33] == 0x01) {
                 // compressed private key
                 _privKey = new byte[32];
                 Array.Copy(hex, 1, _privKey, 0, 32);
@@ -232,7 +232,7 @@ namespace Casascius.Bitcoin {
                 return Util.ByteArrayToString(PrivateKeyBytes);
             }
             protected set {
-                byte[] hex = Util.ValidateAndGetHexPrivateKey(0x80, value, 32);
+                byte[] hex = Util.ValidateAndGetHexPrivateKey(Bitcoin.AddressType.ToPrivateKeyPrefix(AddressType), value, 32);
                 if (hex == null) throw new ApplicationException("Invalid private hex key");
                 _privKey = hex;
             }
@@ -261,13 +261,13 @@ namespace Casascius.Bitcoin {
                 if (IsCompressedPoint) {
                     byte[] rv = new byte[34];
                     Array.Copy(_privKey, 0, rv, 1, 32);
-                    rv[0] = 0x80;
+                    rv[0] = Bitcoin.AddressType.ToPrivateKeyPrefix(AddressType);
                     rv[33] = 1;
                     return Util.ByteArrayToBase58Check(rv);
                 } else {
                     byte[] rv = new byte[33];
                     Array.Copy(_privKey, 0, rv, 1, 32);
-                    rv[0] = 0x80;
+                    rv[0] = Bitcoin.AddressType.ToPrivateKeyPrefix(AddressType);
                     return Util.ByteArrayToBase58Check(rv);
                 }
             }
@@ -296,7 +296,7 @@ namespace Casascius.Bitcoin {
 
                 if (hex[0] == 0x82) {
                     this.IsCompressedPoint = true;
-                } else if (hex[0] != 0x80) {
+                } else if (hex[0] != Bitcoin.AddressType.ToPrivateKeyPrefix(AddressType)) {
                     throw new ApplicationException("This is a valid base58 string but it has no Wallet Import Format identifier.");
                 }
 

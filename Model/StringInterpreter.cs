@@ -104,7 +104,7 @@ namespace Casascius.Bitcoin {
                         case 33:
                         case 34:
                             // Unencrypted private key
-                            return new KeyPair(what);
+                            return new KeyPair(what, compressed, addressType);
                         case 36:
                             // these pairs aren't decided by length alone,
                             // but the constructors will throw an exception if they
@@ -141,7 +141,7 @@ namespace Casascius.Bitcoin {
                 } catch { }
             }
 
-            if (MiniKeyPair.IsValidMiniKey(what, addressType) == 1) return new MiniKeyPair(what, addressType);
+            if (MiniKeyPair.IsValidMiniKey(what) == 1) return new MiniKeyPair(what, addressType);
 
             return null;
 

@@ -127,7 +127,7 @@ namespace BtcAddress {
         }
 
         private void UpdateMinikeyDescription(byte addressType) {
-            int isminikey = MiniKeyPair.IsValidMiniKey(txtMinikey.Text, addressType);
+            int isminikey = MiniKeyPair.IsValidMiniKey(txtMinikey.Text);
             if (isminikey == 1) {
                 lblWhyNot.Visible = false;
                 lblNotSafe.Visible = true;
@@ -178,7 +178,7 @@ namespace BtcAddress {
                     byte[] str = Util.Force32Bytes(utf8.GetBytes(txtPrivHex.Text.Substring(1, txtPrivHex.Text.Length - 2)));
                     txtPrivHex.Text = RemoveSpacesIf(Util.ByteArrayToString(str));
                 }
-                KeyPair ba = new KeyPair(txtPrivHex.Text, compressed: compressToolStripMenuItem.Checked);
+                KeyPair ba = new KeyPair(txtPrivHex.Text, compressToolStripMenuItem.Checked, AddressType.ToAddressType(cboCoinType.Text));
 
                 if (txtPassphrase.Text != "") {
                     SetText(txtPrivWIF, new Bip38KeyPair(ba, txtPassphrase.Text).EncryptedPrivateKey);
@@ -547,7 +547,7 @@ namespace BtcAddress {
 
 
                 string pubhex = Util.PrivHexToPubHex(Util.ByteArrayToString(Util.ComputeSha256(shacode)));
-                string pubhash = Util.PubHexToPubHash(pubhex);
+                string pubhash = Util.PubHexToPubHash(4, pubhex);
                 string address = Util.PubHashToAddress(pubhash, "Bitcoin");
 
 
@@ -596,7 +596,7 @@ namespace BtcAddress {
                         byte[] privkey = Util.ComputeSha256(fields[1]);
 
                         string pubhex = Util.PrivHexToPubHex(Util.ByteArrayToString(privkey)).Replace(" ", "");
-                        string pubhash = Util.PubHexToPubHash(pubhex);
+                        string pubhash = Util.PubHexToPubHash(4, pubhex);
                         string address = Util.PubHashToAddress(pubhash, "Bitcoin");
 
                         if (address != fields[0] || pubhex != fields[2]) {
